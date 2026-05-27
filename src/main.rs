@@ -1,5 +1,6 @@
 mod commands;
 mod types;
+mod utils;
 
 use crate::types::Data;
 
@@ -15,7 +16,7 @@ async fn main() {
 
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
-            commands: vec![commands::ping::ping()],
+            commands: vec![commands::ping::ping(), commands::calc::calc()],
             ..Default::default()
         })
         .setup(|ctx, _ready, framework| {
