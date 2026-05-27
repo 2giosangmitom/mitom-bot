@@ -1,0 +1,33 @@
+name: CI
+
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Test Rust
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up environment
+        uses: jdx/mise-action@v3
+
+      - name: Run tests
+        run: cargo test --verbose
+
+  lint:
+    runs-on: ubuntu-latest
+    name: Lint Rust
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up environment
+        uses: jdx/mise-action@v3
+
+      - name: Run Clippy
+        run: cargo clippy

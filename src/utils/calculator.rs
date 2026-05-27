@@ -1,50 +1,48 @@
-use std::collections::VecDeque;
-
 pub(crate) fn calculate(expression: &str) -> anyhow::Result<i32> {
-    let mut stack: VecDeque<(i32, i32)> = VecDeque::new();
+    let mut stack: Vec<(i32, i32)> = Vec::new();
     let n = expression.len();
     let expr_bytes = expression.as_bytes();
     let mut result: i32 = 0;
-    let mut curr_num: i32 = 0;
-    let mut curr_sign: i32 = 1;
+    let mut sign: i32 = 1;
     let mut i = 0;
 
     while i < n {
-        if expr_bytes[i] == b'-' {
-            curr_sign = -1;
-            i += 1;
-        } else if expr_bytes[i] == b'+' {
-            curr_sign = 1;
-            i += 1;
-        } else if expr_bytes[i] == b'(' {
-            result += curr_num;
-            stack.push_back((result, curr_sign));
-            result = 0;
-            curr_num = 0;
-            curr_sign = 1;
-            i += 1;
-        } else if expr_bytes[i] == b')' {
-            let (last_result, last_sign) = stack.pop_back().unwrap();
-            result = last_result + last_sign * result;
-            i += 1;
-        } else if expr_bytes[i].is_ascii_digit() {
-            while i < n
-                && let Some(d) = char::from(expr_bytes[i]).to_digit(10)
-            {
-                curr_num = curr_num * 10 + d as i32;
-                i += 1;
+        match expr_bytes[i] {
+            b'-' => sign = -1,
+            b'+' => sign = 1,
+            b'(' => {
+                stack.push((result, sign));
+                result = 0;
+                sign = 1;
             }
-            result += curr_sign * curr_num;
-            curr_num = 0;
-            curr_sign = 1;
-        } else if expr_bytes[i].is_ascii_whitespace() {
-            i += 1;
-        } else {
-            return Err(anyhow::anyhow!(
-                "Invalid character: {}",
-                expr_bytes[i] as char
-            ));
+            b')' => {
+                let (last_result, last_sign) = stack.pop().unwrap();
+                result = last_result + last_sign * result;
+            }
+            b'0'..=b'9' => {
+                let mut curr_num: i32 = 0;
+                while i < n
+                    && let Some(d) = char::from(expr_bytes[i]).to_digit(10)
+                {
+                    curr_num = curr_num * 10 + d as i32;
+                    i += 1;
+                }
+                result += sign * curr_num;
+                sign = 1;
+                continue;
+            }
+            _ => {
+                if expr_bytes[i].is_ascii_whitespace() {
+                    i += 1;
+                } else {
+                    return Err(anyhow::anyhow!(
+                        "Invalid character: {}",
+                        expr_bytes[i] as char
+                    ));
+                }
+            }
         }
+        i += 1;
     }
 
     Ok(result)
