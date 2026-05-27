@@ -1,0 +1,11 @@
+{
+  "$schema": "https://schema.railpack.com",
+  "steps": {
+    "build": {
+      "commands": ["cargo build --release"]
+    }
+  },
+  "deploy": {
+    "startCommand": "./target/release/mitom-bot"
+  }
+}
