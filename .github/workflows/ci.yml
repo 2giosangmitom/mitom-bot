@@ -29,5 +29,8 @@ jobs:
       - name: Set up environment
         uses: jdx/mise-action@v3
 
+      - name: Install Clippy
+        run: rustup component add clippy
+
       - name: Run Clippy
         run: cargo clippy
