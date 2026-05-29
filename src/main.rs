@@ -37,7 +37,7 @@ async fn main() -> Result<()> {
         })
         .build();
 
-    let intents = GatewayIntents::GUILD_MESSAGES | GatewayIntents::MESSAGE_CONTENT;
+    let intents = GatewayIntents::empty();
 
     let mut client = Client::builder(&token, intents)
         .framework(framework)
